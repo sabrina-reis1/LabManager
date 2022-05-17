@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using LabManager.Database;
+using LabManager.Repositories;
 
 //routing == roteamento
 
@@ -8,6 +9,7 @@ var modelAction = args[1]; //action
 
 new DatabaseSetup();
 
+var computerRepository = new ComputerRepository();
 
 //computers
 if(modelName == "Computer")
@@ -15,26 +17,11 @@ if(modelName == "Computer")
     if(modelAction == "List")
     {
         Console.WriteLine("Computer List");
-        var connection = new SqliteConnection("Data Source=database.db"); //ctrl . criar banco de dados com SQL
-        connection.Open(); //abrindo uma conexão
-
-        var command = connection.CreateCommand(); //criando comando
-        command.CommandText = "SELECT * FROM Computers"; //parametros a serem substituídos por valores
-
-        var reader = command.ExecuteReader();
-        //reader.Read(); //pegar primeira linha
-        //reader.Read(); //pegar segunda linha
-
-        while(reader.Read()) //pegar todas as linhas enquanto for true
+        
+        foreach (var computer in computerRepository.GetAll())
         {
-            Console.WriteLine(
-                "{0}, {1}, {2}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2)
-            );
-
+            Console.WriteLine("{0}, {1}, {2}", computer.Id, computer.Ram, computer.Processor);
         }
-
-        reader.Close();
-        connection.Close(); // quando abrimos uma conexão, precisamos fechá-la
     }
     if(modelAction == "New")
     {
@@ -60,43 +47,46 @@ if(modelName == "Computer")
 
 if(modelName == "Lab")
 {
-    Console.WriteLine("Lab List");
-    var connection = new SqliteConnection("Data Source=database.db");
-    connection.Open();
+        if(modelAction == "List")
+        {
+        Console.WriteLine("Lab List");
+        var connection = new SqliteConnection("Data Source=database.db");
+        connection.Open();
 
-    var command = connection.CreateCommand();
-    command.CommandText = "SELECT * FROM labs";
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT * FROM labs";
 
-    var reader = command.ExecuteReader();
+        var reader = command.ExecuteReader();
 
-    while(reader.Read())
-    {
-        Console.WriteLine(
-            "{0}, {1}, {2}, {3}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)
-        );
+        while(reader.Read())
+        {
+            Console.WriteLine(
+                "{0}, {1}, {2}, {3}", reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3)
+            );
+        }
+
+        reader.Close();
+        connection.Close();
     }
 
-    reader.Close();
-    connection.Close();
-}
+    if(modelAction == "New")
+    {
+        var id = Convert.ToInt32(args[2]);
+        var number = args[3];
+        var name = args[4];
+        var block = args[5];
 
-if(modelAction == "New")
-{
-    var id = Convert.ToInt32(args[2]);
-    var number = args[3];
-    var name = args[4];
-    var block = args[5];
+        var connection = new SqliteConnection("Data Source=database.db"); //ctrl . criar banco de dados com SQL
+        connection.Open(); //abrir uma conexão
 
-    var connection = new SqliteConnection("Data Source=database.db"); //ctrl . criar banco de dados com SQL
-    connection.Open(); //abrir uma conexão
+        var command = connection.CreateCommand(); //criando comando
+        command.CommandText = "INSERT INTO Labs VALUES($id, $number, $name, $block);"; //parametros a serem substituídos por valores
+        command.Parameters.AddWithValue("$id", id);
+        command.Parameters.AddWithValue("$number", number);
+        command.Parameters.AddWithValue("$name", name);
+        command.Parameters.AddWithValue("$block", block);
 
-    var command = connection.CreateCommand(); //criando comando
-    command.CommandText = "INSERT INTO Labs VALUES($id, $number, $name, $block);"; //parametros a serem substituídos por valores
-    command.Parameters.AddWithValue("$id", id);
-    command.Parameters.AddWithValue("$number", number);
-    command.Parameters.AddWithValue("$name", name);
-    command.Parameters.AddWithValue("$block", block);
-
-    command.ExecuteNonQuery();
-    connection.Close();
+        command.ExecuteNonQuery();
+        connection.Close();
+    }
 }
