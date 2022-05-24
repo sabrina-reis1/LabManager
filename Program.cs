@@ -1,19 +1,20 @@
 ﻿using Microsoft.Data.Sqlite;
 using LabManager.Database;
 using LabManager.Repositories;
+using LabManager.Models;
 
 //routing == roteamento
 
 var modelName = args[0];
 var modelAction = args[1]; //action
 
-new DatabaseSetup();
-
-var computerRepository = new ComputerRepository();
+var databaseConfig = new DatabaseConfig();
+new DatabaseSetup(databaseConfig);
 
 //computers
 if(modelName == "Computer")
 {
+    var computerRepository = new ComputerRepository(databaseConfig);
     if(modelAction == "List")
     {
         Console.WriteLine("Computer List");
@@ -25,21 +26,13 @@ if(modelName == "Computer")
     }
     if(modelAction == "New")
     {
+        Console.WriteLine("Computer New");
         var id = Convert.ToInt32(args[2]); //converter para string pq args é tipo string
         var ram = args[3];
         var processor = args[4]; //pegamos o que o usuário colocou
 
-        var connection = new SqliteConnection("Data Source=database.db"); //ctrl . criar banco de dados com SQL
-        connection.Open(); //abrir uma conexão
-
-        var command = connection.CreateCommand(); //criando comando
-        command.CommandText = "INSERT INTO Computers VALUES($id, $ram, $processor);"; //parametros a serem substituídos por valores
-        command.Parameters.AddWithValue("$id", id);
-        command.Parameters.AddWithValue("$ram", ram);
-        command.Parameters.AddWithValue("$processor", processor);
-
-        command.ExecuteNonQuery();
-        connection.Close(); // quando abrimos uma conexão, precisamos fechá-la
+        var computer = new Computer(id, ram, processor);
+        computerRepository.Save(computer);
     }
 }
 
