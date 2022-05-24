@@ -38,7 +38,7 @@ class ComputerRepository
         return computers;
     }
 
-    public void Save(Computer computer)
+    public Computer Save(Computer computer)
     {
         var connection = new SqliteConnection(databaseConfig.ConnectionString); //ctrl . criar banco de dados com SQL
         connection.Open(); //abrir uma conexão
@@ -51,5 +51,6 @@ class ComputerRepository
 
         command.ExecuteNonQuery();
         connection.Close();
+        return computer;
     }
 }
