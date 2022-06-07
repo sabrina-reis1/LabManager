@@ -38,9 +38,14 @@ if(modelName == "Computer")
     {
         Console.WriteLine("Computer Show");
         var id = Convert.ToInt32(args[2]);
-        
-        var computer = computerRepository.GetById(id);
-        Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
+
+        if(computerRepository.existsById(id))
+        {
+            var computer = computerRepository.GetById(id); // compyterrepository é de onde está vindo o código
+            Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
+        } else {
+            Console.WriteLine($"O computador ${id} não existe");
+        }
     }
     if(modelAction == "Update")
     {
