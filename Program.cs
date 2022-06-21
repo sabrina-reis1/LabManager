@@ -39,7 +39,7 @@ if(modelName == "Computer")
         Console.WriteLine("Computer Show");
         var id = Convert.ToInt32(args[2]);
         
-        if(computerRepository.existsById(id))
+        if(computerRepository.ExistsById(id))
         {
             var computer = computerRepository.GetById(id);
             Console.WriteLine("{0},{1},{2}", computer.Id, computer.Ram, computer.Processor);
@@ -56,7 +56,7 @@ if(modelName == "Computer")
         var ram = args[3];
         var processor = args[4];
 
-        if(computerRepository.existsById(id))
+        if(computerRepository.ExistsById(id))
         {
             var computer = new Computer(id, ram, processor);
             computerRepository.Update(computer);
@@ -72,7 +72,7 @@ if(modelName == "Computer")
         Console.WriteLine("Computer Delete");
         var id = Convert.ToInt32(args[2]);
         
-        if(computerRepository.existsById(id))
+        if(computerRepository.ExistsById(id))
         {
             computerRepository.Delete(id);
             Console.WriteLine("Computer {0}", id);
