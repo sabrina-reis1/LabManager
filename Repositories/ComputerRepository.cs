@@ -62,7 +62,7 @@ class ComputerRepository
     {
         var connection = new SqliteConnection(databaseConfig.ConnectionString); 
         connection.Open();
-        var result = connection.ExecuteScalar<Boolean>("SELECT COUNT(id) FROM Computers WHERE id=$id;", new { Id = id });
+        var result = connection.ExecuteScalar<Boolean>("SELECT COUNT(id) FROM Computers WHERE id=@id;", new { id = @id });
 
         return result; 
     }
